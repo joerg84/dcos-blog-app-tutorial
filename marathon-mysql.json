@@ -1,0 +1,54 @@
+{
+  "id": "/ghost/mysql",
+  "cmd": "docker-entrypoint.sh --datadir=/mnt/mesos/sandbox/mysqldata/",
+  "cpus": 1,
+  "mem": 1024,
+  "disk": 0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "volumes": [
+      {
+        "containerPath": "mysqldata",
+        "mode": "RW",
+        "persistent": {
+          "size": 500
+        }
+      }
+    ],
+    "docker": {
+      "image": "mysql:5.7",
+      "network": "BRIDGE",
+      "portMappings": [
+        {
+          "containerPort": 3306,
+          "protocol": "tcp",
+          "name": "mysql",
+          "labels": {
+            "VIP_0": "/ghost/mysql:3306"
+          }
+        }
+      ],
+      "privileged": false,
+      "parameters": [],
+      "forcePullImage": false
+    }
+  },
+  "env": {
+    "MYSQL_ROOT_PASSWORD": "root",
+    "MYSQL_DATABASE": "db",
+    "MYSQL_USER": "blog-user",
+    "MYSQL_PASSWORD": "supersecret"
+  },
+  "healthChecks": [
+    {
+      "protocol": "TCP",
+      "portIndex": 0,
+      "gracePeriodSeconds": 300,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3,
+      "ignoreHttp1xx": false
+    }
+  ]
+}
